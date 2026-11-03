@@ -46,10 +46,14 @@ pip install -r requirements.txt
 
 ## Usage
 
+On Windows you can simply double-click `run_report.bat`: it fetches fresh data,
+updates the database and opens the HTML report.
+
 ```bash
-python main.py                  # terminal report, saves the run to the database
-python main.py --html           # also creates output/report.html and opens it
-python main.py --html --theme sunset   # force a background theme
+python main.py                  # terminal report + output/report.html, opens it in the browser
+python main.py --no-html        # terminal report only
+python main.py --no-open        # create the HTML report without opening the browser
+python main.py --theme sunset   # force a background theme
 python main.py --no-save        # don't store this run
 
 python history.py               # last runs with all scores

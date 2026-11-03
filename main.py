@@ -14,8 +14,8 @@ def main() -> int:
     sys.stdout.reconfigure(encoding="utf-8")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--html", action="store_true",
-                        help="also create output/report.html")
+    parser.add_argument("--no-html", action="store_true",
+                        help="terminal report only, don't create output/report.html")
     parser.add_argument("--no-open", action="store_true",
                         help="don't open the browser automatically")
     parser.add_argument("--theme", choices=["day", "sunset", "night"],
@@ -46,7 +46,7 @@ def main() -> int:
         except sqlite3.Error as exc:
             print(f"Database error: {exc}")
 
-    if args.html:
+    if not args.no_html:
         print("Creating HTML report...")
         path = save_html(conditions, scores,
                          open_browser=not args.no_open, theme=args.theme)
