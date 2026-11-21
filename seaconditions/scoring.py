@@ -16,8 +16,6 @@ WIND_DIRECTION_SCORES = {
     "kite":     {0: 100, 45: 10, 90: 10, 135: 10, 180: 100, 225: 80, 270: 60, 315: 60},
     # Diving: offshore flattens the surface near shore, onshore makes chop
     "dive":     {0: 70, 45: 90, 90: 100, 135: 100, 180: 75, 225: 40, 270: 30, 315: 40},
-    # Fishing: mild effect, offshore is easier for casting
-    "fishing":  {0: 70, 45: 80, 90: 90, 135: 90, 180: 75, 225: 60, 270: 55, 315: 60},
     # Sailing: onshore sea breeze is fine, strong offshore pushes you out to sea
     "sailing":  {0: 80, 45: 20, 90: 40, 135: 20, 180: 70, 225: 100, 270: 80, 315: 100},
 }
@@ -91,16 +89,16 @@ def _result(name: str, score: float, notes: list[str]) -> ActivityScore:
 def score_surf(c: SeaConditions) -> ActivityScore:
     notes = []
     height = interp(c.wave_height, [
-        (0, 0), (0.3, 10), (0.6, 50), (0.8, 70), (0.9, 80), (1.0, 90),
-        (1.2, 100), (1.5, 100), (1.8, 100), (2.0, 100), (2.5, 70), (3.0, 40)])
+        (0, 0), (0.3, 10), (0.6, 55), (0.8, 75), (0.9, 90), (1.0, 100),
+        (1.2, 100), (1.5, 100), (1.8, 100), (2.0, 100), (2.5, 75), (3.0, 50)])
     period = interp(c.swell_period, [
         (3, 0), (5, 25), (7, 60), (9, 85), (12, 100)])
 
     dir_factor = wind_direction_factor(c, "surf")
-    speed_part = interp(c.wind_speed_kn, [(0, 100), (6, 100), (15, 70), (22, 40), (30, 10)])
-    wind = weighted([(speed_part, 0.6), (dir_factor, 0.8)])
+    speed_part = interp(c.wind_speed_kn, [(0, 100), (6, 100), (8, 90), (10, 75), (13, 50), (17, 45), (22, 25), (30, 10)])
+    wind = weighted([(speed_part, 0.5), (dir_factor, 0.8)])
 
-    if c.wind_speed_kn < 6:
+    if c.wind_speed_kn < 5:
         notes.append("Glassy")
     elif angle_diff(c.wind_direction, OFFSHORE_CENTER) <= 55:
         notes.append("Offshore wind - clean faces")
@@ -109,9 +107,9 @@ def score_surf(c: SeaConditions) -> ActivityScore:
         if note:
             notes.append(note)
 
-    score = weighted([(height, 0.80), (period, 0.80), (wind, 0.80)])
-    if c.wave_height < 0.3:
-        score = min(score, 15)
+    score = weighted([(height, 1.0), (period, 0.50), (wind, 0.50)])
+    if c.wave_height < 0.5:
+        score = min(score, 25)
         notes.append("Waves too small to surf")
     return _result("Waves Surfing", score, notes)
 
@@ -170,33 +168,6 @@ def score_freediving(c: SeaConditions) -> ActivityScore:
         notes.append(note)
     return _result("Diving", score, notes)
 
-# -- Fishing --
-
-def score_fishing(c: SeaConditions) -> ActivityScore:
-    notes = []
-    waves = interp(c.wave_height, [
-        (0, 80), (0.3, 100), (0.6, 80), (1.0, 60), (1.2, 40), (1.6, 30), (2.2, 0)])
-    speed = interp(c.wind_speed_kn, [(0, 90), (8, 100), (14, 60), (20, 20), (28, 0)])
-    dir_factor = wind_direction_factor(c, "fishing")
-    wind = weighted([(speed, 0.70), (dir_factor, 0.50)])
-
-    if not c.is_day:
-        light = 30
-        notes.append("Night")
-    elif 0 <= c.hours_to_sunset <= 1.5:
-        light = 100
-        notes.append("Golden hour")
-    else:
-        light = 70
-
-    score = weighted([(waves, 0.75), (wind, 0.50), (light, 0.25)])
-    if 0.6 <= c.wave_height <= 1.2:
-        notes.append("Wavy")
-    note = direction_note(c, dir_factor)
-    if note:
-        notes.append(note)
-    return _result("Fishing", score, notes)
-
 # -- Sailing --
 
 def score_sailing(c: SeaConditions) -> ActivityScore:
@@ -236,4 +207,4 @@ def score_sailing(c: SeaConditions) -> ActivityScore:
 
 def score_all(c: SeaConditions) -> list[ActivityScore]:
     return [score_surf(c), score_wind_sports(c), score_freediving(c),
-            score_fishing(c), score_sailing(c)]
+            score_sailing(c)]

@@ -9,8 +9,8 @@ engine, stores the history in a database, and generates an HTML report.
 - **Data collection** from the free [Open-Meteo](https://open-meteo.com/) Marine
   and Forecast APIs: wave height/direction/period, swell, wind speed, wind
   direction, gusts and sunset time.
-- **Scoring rules engine** for five activities: surfing, windsurf/kite,
-  free diving/spearfishing, coastal fishing and sailing.
+- **Scoring rules engine** for four activities: surfing, windsurf/kite,
+  free diving and sailing.
   - Weighted factors via piecewise-linear score tables (easy to tune).
   - Wind-direction tables per activity (offshore / onshore / sea breeze).
   - Safety ceilings, e.g. strong offshore wind caps kite and sailing scores.

@@ -12,11 +12,12 @@ from .scoring import ActivityScore
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 RATING_COLOR = {
-    "EXCELLENT": "#22c55e",
-    "GOOD": "#84cc16",
-    "FAIR": "#facc15",
-    "POOR": "#fb923c",
-    "NOT RECOMMENDED": "#ef4444",
+    "EXCELLENT": "#38c522",
+    "GOOD": "#16cc2b",
+    "FAIR": "#a6fa15",
+    "POOR TO FAIR": "#74fdb2",
+    "POOR": "#3cfbe8",
+    "NOT RECOMMENDED": "#ca44ef",
 }
 
 THEME_LABEL = {

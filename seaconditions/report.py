@@ -11,13 +11,15 @@ def deg_to_compass(deg: float) -> str:
 
 
 def rating(score: int) -> str:
-    if score >= 80:
+    if score >= 90:
         return "EXCELLENT"
-    if score >= 60:
+    if score >= 80:
         return "GOOD"
-    if score >= 40:
+    if score >= 70:
         return "FAIR"
-    if score >= 20:
+    if score >= 60:
+        return "POOR TO FAIR"
+    if score >= 40:
         return "POOR"
     return "NOT RECOMMENDED"
 
