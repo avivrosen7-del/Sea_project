@@ -19,7 +19,7 @@ def rating(score: int) -> str:
         return "FAIR"
     if score >= 60:
         return "POOR TO FAIR"
-    if score >= 40:
+    if score >= 50:
         return "POOR"
     return "NOT RECOMMENDED"
 
