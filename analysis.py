@@ -8,11 +8,7 @@ import sys
 import pandas as pd
 
 from seaconditions.database import DB_PATH
-from seaconditions.report import rating
-
-# A run counts as "good" if report.rating() calls it GOOD or better,
-# so changing the thresholds in report.py updates this analysis too.
-GOOD_RATINGS = {"EXCELLENT", "GOOD"}
+from seaconditions.report import is_good
 
 QUERY = """
 SELECT r.timestamp, r.wave_height, r.wind_speed_kn, r.wind_direction,
@@ -57,8 +53,9 @@ def main() -> None:
                  .sort_values("mean", ascending=False))
     print(summary, "\n")
 
-    print("Share of runs rated GOOD or better, %:")
-    good = (df.assign(good=df["score"].map(rating).isin(GOOD_RATINGS))
+    # "Good" is defined by RATING_BANDS in seaconditions/report.py
+    print("Share of good runs (see RATING_BANDS), %:")
+    good = (df.assign(good=df["score"].map(is_good))
               .groupby("activity")["good"].mean() * 100)
     print(good.round(0).sort_values(ascending=False), "\n")
 

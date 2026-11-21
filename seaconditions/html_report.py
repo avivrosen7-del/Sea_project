@@ -6,19 +6,10 @@ from pathlib import Path
 from string import Template
 
 from .models import SeaConditions
-from .report import deg_to_compass, rating
+from .report import deg_to_compass, rating_band
 from .scoring import ActivityScore
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
-
-RATING_COLOR = {
-    "EXCELLENT": "#38c522",
-    "GOOD": "#16cc2b",
-    "FAIR": "#a6fa15",
-    "POOR TO FAIR": "#74fdb2",
-    "POOR": "#3cfbe8",
-    "NOT RECOMMENDED": "#ca44ef",
-}
 
 THEME_LABEL = {
     "day": "☀️ Day",
@@ -44,14 +35,14 @@ def _stat(label: str, value: str, extra: str = "") -> str:
 
 
 def _card(s: ActivityScore) -> str:
-    key = rating(s.score)
+    band = rating_band(s.score)
     notes = "".join(
         f'<li class="{"warn" if n.startswith("SAFETY") else ""}">{escape(n)}</li>'
         for n in s.notes
     )
     return f"""
-    <div class="card" style="--c:{RATING_COLOR[key]}">
-      <div class="card-head"><h2>{escape(s.name)}</h2><span class="badge">{key}</span></div>
+    <div class="card" style="--c:{band.color}">
+      <div class="card-head"><h2>{escape(s.name)}</h2><span class="badge">{band.label}</span></div>
       <div class="score">{s.score}<small>/100</small></div>
       <div class="bar"><div style="width:{s.score}%"></div></div>
       <ul class="notes">{notes}</ul>
